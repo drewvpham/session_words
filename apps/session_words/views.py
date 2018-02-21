@@ -1,24 +1,42 @@
 from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
 import string, random
+from datetime import datetime
 # Create your views here.
+def home(request):
+    return redirect("/session_words")
+
 def index(request):
-    if "attempt_num" not in request.session or "word" not in request.session:
-        request.session["attempt_num"] = 0
-        request.session["word"] =''
-        data={"attempt_num": request.session["attempt_num"], "word": request.session["word"]}
-
     return render(request, 'session_words/index.html')
 
 
-def process(request):
+def add_word(request):
     if request.method=='POST':
-        new_word=get_random_string(length=14)
-        print new_word
-        request.session["word"]='Your random word is: '+new_word
-        request.session["attempt_num"] +=1
+        word = request.POST['word']
+        color = request.POST['color']
 
-    return render(request, 'session_words/index.html')
+        if 'bigFont' in request.POST:
+            big= request.POST['bigFont']
+        else:
+            big='no'
+
+
+    new_word = {'word' : word,
+				'color' : color,
+				'big' : big,
+				'created_at' :"- added on " + datetime.now().strftime("%m-%d-%Y-%H:%M %p")
+				}
+    if "words" not in request.session:
+        request.session["words"] = []
+        request.session['words'].append(new_word)
+    else:
+		saved_list = request.session["words"]
+		saved_list.append(new_word)
+		request.session['words'] = saved_list
+
+    print request.session['words']
+
+    return redirect('/')
 
 def reset(request):
     request.session.clear()

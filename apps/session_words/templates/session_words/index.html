@@ -1,1 +1,92 @@
-hi
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+
+	<style type="text/css">
+	#wapper{
+			margin: 20px;
+			padding: 20px;
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+			border: 1px solid black;
+			line-height: 20px;
+	}
+	.button {
+		    background-color: #4CAF50;
+		    border: none;
+		    color: white;
+		    width: 150px;
+		    padding: 8px ;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 15px;
+		    margin: 3px;
+		    cursor: pointer;
+	}
+	.red{
+		color: red;
+	}
+	.blue{
+		color: blue;
+	}
+	.green{
+		color: green;
+	}
+	.bigFont{
+		font-size: 50px;
+	}
+	</style>
+
+  <title>Session Words</title>
+</head>
+
+<body>
+  <span>
+  <h1>Add a new word</h1>
+  <h3>{{request.session.word}}</h3>
+  <form action="session_words/add_word" method="post">
+    <input type="text" id='word' name='word'> {% csrf_token %}
+    <br />
+    <label>Color:</label>
+    <br />
+    <input type="radio" id="red" name="color" value="red">
+    <label>Red</label>
+    <br />
+    <input type="radio" id="blue" name="color" value="blue">
+    <label>Blue</label>
+    <br />
+    <input type="radio" id="green" name="color" value="green">
+    <label>Green</label>
+    <br />
+    <input type="checkbox" name="bigFont" value="bigFont">show in BIG font<br>
+    <input type="submit" type="submit" value="Add Word">
+  </form>
+
+  </span>
+  <span>
+    <form action="session_words/reset" method="POST">
+				{% csrf_token %}
+				<br><input class="button" type="submit" name="submit" value="Clear Words">
+			</form>
+      {%for word in request.session.words%}
+    
+      {% if word.big == "bigFont" %}
+
+			<p>
+				<span class="{{ word.color }} {{ word.big }}">{{ word.word }}</span>{{ word.created_at }}
+			</p>
+			{% else %}
+			<p>
+				<span class="{{ word.color }}">{{ word.word }}</span>{{ word.created_at }}
+			</p>
+				{% endif %}
+			{% endfor %}
+  </span>
+
+
+</body>
+
+</html>
